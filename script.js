@@ -25,7 +25,7 @@ window.onload = function () {
 	context.fillRect(player.x, player.y, player.width, player.height);
 
 	requestAnimationFrame(update);
-	document.addEventListener("keydown", playerMove)
+	document.addEventListener("mousemove", playerMove)
 };
 
 function update() {
@@ -41,17 +41,10 @@ function outOfBounds(xPosition) {
 }
 
 function playerMove(event) {
-	if (event.code === "ArrowLeft") {
-		// player.x -= player.velocity;
-		let nextPlayer = player.x - player.velocity
-		if (!outOfBounds(nextPlayer)) {
-			player.x = nextPlayer;
-		}
-	} else if (event.code === "ArrowRight") {
-		// player.x += player.velocity;
-		let nextPlayer = player.x + player.velocity
-		if (!outOfBounds(nextPlayer)) {
-			player.x = nextPlayer;
-		}
+	let mouseX = event.clientX - board.offsetLeft;
+	let nextPlayerX = mouseX - player.width / 2;
+
+	if (!outOfBounds(nextPlayerX)) {
+		player.x = nextPlayerX;
 	}
 }
