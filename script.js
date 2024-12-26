@@ -4,7 +4,7 @@ let boardWidth = 500;
 let boardHeight = 500;
 
 
-let playerWidth = 500;
+let playerWidth = 80;
 let playerHeight = 10;
 let player = {
 	x : boardWidth / 2 -  playerWidth / 2,
