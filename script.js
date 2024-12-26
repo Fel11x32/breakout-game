@@ -4,7 +4,7 @@ let boardWidth = 500;
 let boardHeight = 500;
 
 
-let playerWidth = 80;
+let playerWidth = 500;
 let playerHeight = 10;
 let player = {
 	x : boardWidth / 2 -  playerWidth / 2,
@@ -29,7 +29,6 @@ let blocksWidth = 50;
 let blocksHeight = 10;
 let blocksColumns = 8;
 let blocksRows = 4;
-let blocksMaxRows = 10;
 let blocksCount = 0;
 let startBlockX = 15;
 let startBlockY = 45;
@@ -132,7 +131,8 @@ function update() {
 		// game over
 		context.fillStyle = '#fff';
 		context.font = '24px Arial';
-		context.fillText("Game Over: Press 'Space' to Restart", 55, board.height / 2);
+		context.fillText("Game Over: Press 'Space' to Restart", 50, board.height / 2);
+		context.fillText(`Final Score: ${score}`, 140, board.height / 2 + 40);
 		gameOver = true;
 	}
 
@@ -168,6 +168,13 @@ function update() {
 			context.fillRect(block.x, block.y, block.width, block.height);
 		}
 	});
+
+	if (blocksCount === 0) {
+		context.fillStyle = '#fff';
+		context.font = '24px Arial';
+		context.fillText("You Win! Press 'Space' to Restart", 60, board.height / 2);
+		gameOver = true;
+	}
 
 	// Счёт
 	context.font = "20px Sans-Serif";
