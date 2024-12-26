@@ -1,7 +1,8 @@
-let board;
+const board = document.getElementById("game-canvas");
+const context = board.getContext("2d");
 let boardWidth = 500;
 let boardHeight = 500;
-let context;
+
 
 let playerWidth = 80;
 let playerHeight = 10;
@@ -32,6 +33,9 @@ let blocksMaxRows = 10;
 let blocksCount = 0;
 let startBlockX = 15;
 let startBlockY = 45;
+
+let score = 0;
+let gameOver = false;
 
 function outOfBounds(xPosition) {
 	return (xPosition < 0 || xPosition + player.width > boardWidth);
@@ -104,6 +108,9 @@ function rightCollision(ball, block) {
 
 function update() {
 	requestAnimationFrame(update);
+	if (gameOver) {
+		return;
+	}
 	context.clearRect(0, 0, boardWidth, boardHeight);
 
 	// игрок
@@ -123,6 +130,10 @@ function update() {
 		ballVelocityX *= -1;
 	} else if (ball.y + ball.height >= boardHeight) {
 		// game over
+		context.fillStyle = '#fff';
+		context.font = '24px Arial';
+		context.fillText("Game Over: Press 'Space' to Restart", 55, board.height / 2);
+		gameOver = true;
 	}
 
 	// отскок мяча от платформы
@@ -147,25 +158,58 @@ function update() {
 				block.break = true;
 				ballVelocityY *= -1;
 				blocksCount -= 1;
+				score += 100;
 			} else if (leftCollision(ball, block) || rightCollision(ball, block)) {
 				block.break = true;
 				ballVelocityX *= -1;
 				blocksCount -= 1;
+				score += 100;
 			}
 			context.fillRect(block.x, block.y, block.width, block.height);
 		}
 	});
+
+	// Счёт
+	context.font = "20px Sans-Serif";
+	context.fillText(score, 10, 25);
 }
 
 // Функция отрисовки
 window.onload = function () {
-	board = document.getElementById("game-canvas");
 	board.height = boardHeight;
 	board.width = boardWidth;
-	context = board.getContext("2d");
 
 	requestAnimationFrame(update);
 	document.addEventListener("mousemove", playerMove);
 
 	createBlock();
 };
+
+document.addEventListener("keydown", (event) => {
+	if (event.code === "Space" && gameOver) {
+		restartGame();
+	}
+});
+
+function restartGame() {
+	gameOver = false;
+	player = {
+		x : boardWidth / 2 -  playerWidth / 2,
+		y : boardHeight - playerHeight - 5,
+		width : playerWidth,
+		height : playerHeight,
+	};
+
+	ballVelocityX = Math.random() > 0.5 ? 2 : -2; // Случайный выбор направления по X
+	ballVelocityY = Math.random() * 2 + 1;       // Случайная скорость по Y
+	ball = {
+		x : boardWidth / 2,
+		y : boardHeight / 2,
+		width : ballWidth,
+		height : ballHeight,
+	};
+
+	blocksArray = [];
+	score = 0;
+	createBlock();
+}
