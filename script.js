@@ -27,9 +27,11 @@ let blocksArray = [];
 let blocksWidth = 50;
 let blocksHeight = 10;
 let blocksColumns = 8;
-let blocksRows = 3;
+let blocksRows = 4;
 let blocksMaxRows = 10;
 let blocksCount = 0;
+let startBlockX = 15;
+let startBlockY = 45;
 
 function outOfBounds(xPosition) {
 	return (xPosition < 0 || xPosition + player.width > boardWidth);
@@ -52,6 +54,24 @@ function detectCollision(rectA, rectB) {
 		rectA.y < rectB.y + rectB.height &&
 		rectA.y + rectA.height > rectB.y
 	);
+}
+
+// Создание масивва плиток
+function createBlock() {
+	blocksArray = [];
+	for (let col = 0; col < blocksColumns; col++) {
+		 for (let row = 0; row < blocksRows; row++) {
+			 let block = {
+				 x: startBlockX + col * blocksWidth + col * 10,
+				 y: startBlockY + row * blocksHeight + row * 10,
+				 width: blocksWidth,
+				 height: blocksHeight,
+				 break: false,
+			 }
+			 blocksArray.push(block);
+		}
+	}
+	blocksCount = blocksArray.length;
 }
 
 function topCollision(ball, block) {
@@ -108,11 +128,33 @@ function update() {
 	// отскок мяча от платформы
 	if (topCollision(ball, player)) {
 		ballVelocityY *= -1;
+
+		let hitPos = (ball.x + ball.width / 2) - (player.x + player.width / 2);
+		ballVelocityX += hitPos * 0.04; // Увеличиваем изменение X в зависимости от 2попадания
+
+		ballVelocityX = Math.max(-5, Math.min(5, ballVelocityX));
+		ballVelocityY = Math.max(-5, Math.min(5, ballVelocityY));
 	} else if (leftCollision(ball, player)) {
 		ballVelocityX *= -1;
 	} else if (rightCollision(ball, player)) {
 		ballVelocityX *= -1;
 	}
+
+	context.fillStyle = "blue";
+	blocksArray.forEach((block) => {
+		if (!block.break) {
+			if (topCollision(ball, block) || bottomCollision(ball, block)) {
+				block.break = true;
+				ballVelocityY *= -1;
+				blocksCount -= 1;
+			} else if (leftCollision(ball, block) || rightCollision(ball, block)) {
+				block.break = true;
+				ballVelocityX *= -1;
+				blocksCount -= 1;
+			}
+			context.fillRect(block.x, block.y, block.width, block.height);
+		}
+	});
 }
 
 // Функция отрисовки
@@ -122,9 +164,8 @@ window.onload = function () {
 	board.width = boardWidth;
 	context = board.getContext("2d");
 
-	context.fillStyle = "yellow";
-	context.fillRect(player.x, player.y, player.width, player.height);
-
 	requestAnimationFrame(update);
-	document.addEventListener("mousemove", playerMove)
+	document.addEventListener("mousemove", playerMove);
+
+	createBlock();
 };
