@@ -14,14 +14,22 @@ let player = {
 
 let ballWidth = 10;
 let ballHeight = 10;
-let ballVelocityX = -2;
-let ballVelocityY = 1;
+let ballVelocityX = Math.random() > 0.5 ? 2 : -2; // Случайный выбор направления по X
+let ballVelocityY = Math.random() * 2 + 1;       // Случайная скорость по Y
 let ball = {
 	x : boardWidth / 2,
 	y : boardHeight / 2,
 	width : ballWidth,
 	height : ballHeight,
 }
+
+let blocksArray = [];
+let blocksWidth = 50;
+let blocksHeight = 10;
+let blocksColumns = 8;
+let blocksRows = 3;
+let blocksMaxRows = 10;
+let blocksCount = 0;
 
 function outOfBounds(xPosition) {
 	return (xPosition < 0 || xPosition + player.width > boardWidth);
